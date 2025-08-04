@@ -1,15 +1,21 @@
-generate_ard_summary <- function(data, adsl, cross_tab = TRUE, strat_var = "rel_grp") {
 
-  # 分母（bigN）の作成
+
+generate_ard_summary <- function(data,
+                                 adsl,
+                                 trt_var = "TRT01A",
+                                 cross_tab = TRUE,
+                                 strat_var = "rel_grp"
+                                 ){
+
+  # Derive bigN
   big_n_data <- adsl %>%
-    count(TRT01A) %>%
+    count(!!sym(trt_var)) %>%
     rename(bigN = n)
 
-  # ARD作成用ヘルパー関数
   create_ard <- function(df, variable, strat = strat_var) {
-    by_vars <- if (cross_tab) c("TRT01A", strat) else "TRT01A"
+    by_vars <- if (cross_tab) c(trt_var, strat) else trt_var
     df %>%
-      distinct(USUBJID, TRT01A, .data[[strat]], .keep_all = TRUE) %>%
+      distinct(USUBJID, !!sym(trt_var), .data[[strat]], .keep_all = TRUE) %>%
       ard_categorical(
         by = by_vars,
         variables = variable,
@@ -18,7 +24,6 @@ generate_ard_summary <- function(data, adsl, cross_tab = TRUE, strat_var = "rel_
       )
   }
 
-  # 個別ARDの作成
   ard_ae     <- create_ard(data, "ANYAE")
   ard_aeg3   <- create_ard(filter(data, AEGRD == "Y"), "AEGRD")
   ard_sae    <- create_ard(filter(data, AESER == "Y"), "AESER")
@@ -27,7 +32,6 @@ generate_ard_summary <- function(data, adsl, cross_tab = TRUE, strat_var = "rel_
   ard_itrr   <- create_ard(filter(data, AEITRR == "Y"), "AEITRR")
   ard_redu   <- create_ard(filter(data, AEREDUCE == "Y"), "AEREDUCE")
 
-  # マージ・ラベリング
   all_ard_temp <- bind_ard(ard_ae, ard_aeg3, ard_fatal, ard_sae, ard_disc, ard_itrr, ard_redu) %>%
     rename_ard_columns(unlist = "stat") %>%
     mutate(
@@ -53,9 +57,8 @@ generate_ard_summary <- function(data, adsl, cross_tab = TRUE, strat_var = "rel_
       ord2 = if_else(label %in% c("Any AE", "Any SAE"), 0, 1)
     ) %>%
     filter(!is.na(label)) %>%
-    select(TRT01A, !!sym(strat_var), group, label, stat_name, stat, ord1, ord2)
+    select(!!sym(trt_var), !!sym(strat_var), group, label, stat_name, stat, ord1, ord2)
 
-  # 母数行の準備（層別変数NA）
   big_n_data2 <- big_n_data %>%
     mutate(
       !!sym(strat_var) := NA_character_,
@@ -66,14 +69,13 @@ generate_ard_summary <- function(data, adsl, cross_tab = TRUE, strat_var = "rel_
       ord1 = 99,
       ord2 = 99
     ) %>%
-    select(TRT01A, !!sym(strat_var), group, label, stat_name, stat, ord1, ord2)
+    select(!!sym(trt_var), !!sym(strat_var), group, label, stat_name, stat, ord1, ord2)
 
-  # 結合して返す
   bind_rows(all_ard_temp, big_n_data2)
 }
 
 # クロス集計（TRT01A × rel_grp）
-#all_ard_cross <- generate_ard_summary(adae, adsl, cross_tab = TRUE, strat_var = "rel_grp")
+all_ard_cross <- generate_ard_summary(adae, adsl, cross_tab = TRUE, strat_var = "rel_grp")
 
 # 単純集計（TRT01Aのみ）
 #all_ard_simple <- generate_ard_summary(adae, adsl, cross_tab = FALSE)
