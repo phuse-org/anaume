@@ -6,19 +6,6 @@
 generate_ard_summary_2 <- function(data, adsl, strat_var = NULL) {
 
   # ----------------------------------------------------------------------------
-  # AEカテゴリの定義
-  # ----------------------------------------------------------------------------
-  ae_types <- list(
-    func1("any_ae",   "Any AE",                       expr(TRUE)),
-    func1("aeg3",     "AE >= Grade 3",                expr(AEGRD == "Y")),
-    func1("sae",      "Any SAE",                      expr(AESER == "Y")),
-    func1("fatal",    "Fatal SAEs",                   expr(AESER == "Y" & AEFAT == "Y")),
-    func1("disc",     "AE leads drug withdraw",       expr(AEDISCON == "Y")),
-    func1("itrr",     "AE leads drug interrupt",      expr(AEITRR == "Y")),
-    func1("redu",     "AE leads to dose reduction",   expr(AEREDUCE == "Y"))
-  )
-
-  # ----------------------------------------------------------------------------
   # ARD生成ロジック
   # ----------------------------------------------------------------------------
   big_n_data <- adsl %>%
