@@ -1,98 +1,103 @@
-library(pharmaverseadam)
+library(cards)
+library(haven)
 library(dplyr)
 library(rlang)
-library(cards)
 library(purrr)
 
-adsl <- pharmaverseadam::adsl
-adae <- pharmaverseadam::adae
+# Load data
+adsl <- read_xpt(here("data", "adsl.xpt"))
+adae <- read_xpt(here("data", "adae.xpt"))
 
-# ae_type関数
-ae_type <- function(id, label, condition) {
-  list(id = id, label = label, condition = condition)
-}
-
-# 条件を定義
+# ----------------------------------------------------------------------------
+# AEカテゴリの定義
+# ----------------------------------------------------------------------------
 ae_types <- list(
-  ae_type(id = "sae", label = "Serious AE", condition = expr(AESER == "Y")),
-  ae_type(id = "aerel", label = "Related AE", condition = expr(AEREL != "NONE"))
+  func1("any_ae",   "Any AE",                       expr(TRUE)),
+  func1("aeg3",     "AE >= Grade 3",                expr(AEGRD == "Y")),
+  func1("sae",      "Any SAE",                      expr(AESER == "Y")),
+  func1("fatal",    "Fatal SAEs",                   expr(AESER == "Y" & AEFAT == "Y")),
+  func1("disc",     "AE leads drug withdraw",       expr(AEDISCON == "Y")),
+  func1("itrr",     "AE leads drug interrupt",      expr(AEITRR == "Y")),
+  func1("redu",     "AE leads to dose reduction",   expr(AEREDUCE == "Y"))
 )
 
-# 各ae_typeに対して処理を繰り返す
-results <- map(ae_types, function(ae) {
-  # SOC処理
-  # 条件に合致する USUBJID × AESOC のユニークな組み合わせに "Y" を立てる
-  tab_variable_soc <- paste0(ae$id, "_SOC")
-  filtered_data_soc <- adae %>%
-    filter(!!ae$condition) %>%
-    distinct(USUBJID, AEBODSYS) %>%
-    mutate(!!tab_variable_soc := "Y")
+# ----------------------------------------------------------------------------
+# ARD を作成
+# ----------------------------------------------------------------------------
+create_ard_pt <- function(adsl, adae) {
+  force(adsl); force(adae)  # 引数をクロージャに固定
 
-  # ARD作成
-  # 治療群ごとに分割
-  soc_results <- adsl %>%
-    select(USUBJID, TRT01A) %>%
-    distinct() %>%
-    split(.$TRT01A) %>%
-    map(function(trt_data) {
-      trt_filtered_data <- filtered_data_soc %>%
-        semi_join(trt_data, by = "USUBJID")
+  function(ae_types, strat_var = NULL,
+           statistic = everything() ~ c("n", "N", "p")) {
 
-      if (nrow(trt_filtered_data) == 0 || all(is.na(trt_filtered_data[[tab_variable_soc]]))) {
+    # --- strat_var の既定値処理 ---
+    if (missing(strat_var) || is.null(strat_var) || length(strat_var) == 0) {
+      if (!"TRT01A" %in% names(adsl)) {
+        stop("`strat_var` が未指定ですが、ADSL に `TRT01A` がありません。群変数を明示的に指定してください。")
+      }
+      strat_var <- "TRT01A"
+    }
+
+    # --- 入力チェック ---
+    missing_group <- setdiff(strat_var, names(adsl))
+    if (length(missing_group) > 0) {
+      stop("ADSL に存在しない群変数: ", paste(missing_group, collapse = ", "))
+    }
+
+    # --- 階層（variables） ---
+    hier_vars <- if ("AEBODSYS" %in% names(adae)) {
+      c("AEBODSYS", "AEDECOD")
+    } else if ("AESOC" %in% names(adae)) {
+      c("AESOC", "AEDECOD")
+    } else {
+      c("AEDECOD")
+    }
+
+    # ADSL の群情報（USUBJID + group_vars
+    subject_groups <- adsl %>%
+      dplyr::select(USUBJID, dplyr::all_of(strat_var)) %>%
+      dplyr::distinct()
+
+    # --- ae_typesごとに ARD を作成 ---
+    ard_list <- purrr::map(ae_types, function(ae) {
+      adae_f <- adae %>%
+        dplyr::filter(!!ae_condition(ae)) %>%
+        dplyr::select(USUBJID, dplyr::any_of(hier_vars)) %>%
+        dplyr::distinct() %>%
+        dplyr::inner_join(subject_groups, by = "USUBJID") %>%
+        dplyr::distinct()
+
+      if (nrow(adae_f) == 0) {
+        message(sprintf("'%s' は該当イベント0件のためスキップします。", ae_id(ae)))
         return(NULL)
       }
 
-      ard_categorical(
-        data = trt_filtered_data,
-        by = "AEBODSYS",
-        variables = all_of(tab_variable_soc),
-        statistic = ~c("n", "p"),
-        denominator = trt_data
+    # cards の階層率計算（n/N/p）
+      cards::ard_stack_hierarchical(
+        data        = adae_f,
+        variables   = dplyr::all_of(hier_vars),
+        by          = dplyr::all_of(strat_var),
+        id          = USUBJID,
+        denominator = adsl,
+        statistic   = statistic
       ) %>%
-        mutate(TRT01A = unique(trt_data$TRT01A),
-               label = ae$label)
-    }) %>%
-    compact() %>%
-    bind_rows()
+        dplyr::mutate(ae_id = ae_id(ae), label = ae_label(ae))
+    })
 
-  # PT処理
-  # 条件に合致する USUBJID × AESOC × AEDECODのユニークな組み合わせに "Y" を立てる
-  tab_variable_pt <- paste0(ae$id, "_PT")
-  filtered_data_pt <- adae %>%
-    filter(!!ae$condition) %>%
-    distinct(USUBJID, AEBODSYS, AEDECOD) %>%
-    mutate(!!tab_variable_pt := "Y")
+    # --- 結合 ---
+    ard_list <- purrr::compact(ard_list)
+    if (length(ard_list) == 0) {
+      return(cards::ard_total_n(adsl, by = dplyr::all_of(strat_var)))
+    }
+    purrr::reduce(ard_list, ~cards::bind_ard(.x, .y, .distinct = TRUE))
+  }
+}
 
-  # ARD作成
-  # 治療群ごとに分割
-  pt_results <- adsl %>%
-    select(USUBJID, TRT01A) %>%
-    distinct() %>%
-    split(.$TRT01A) %>%
-    map(function(trt_data) {
-      trt_filtered_data <- filtered_data_pt %>%
-        semi_join(trt_data, by = "USUBJID")
+   # --- 使用データセット固定 ---
+  jpn_query_summary_pt <- create_ard_pt(adsl, adae)
 
-      if (nrow(trt_filtered_data) == 0 || all(is.na(trt_filtered_data[[tab_variable_pt]]))) {
-        return(NULL)
-      }
-
-      ard_categorical(
-        data = trt_filtered_data,
-        by = c("AEBODSYS", "AEDECOD"),
-        variables = all_of(tab_variable_pt),
-        statistic = ~c("n", "p"),
-        denominator = trt_data
-      ) %>%
-        mutate(TRT01A = unique(trt_data$TRT01A),
-               label = ae$label)
-    }) %>%
-    compact() %>%
-    bind_rows()
-
-  # SOCとPTの結果を結合
-  bind_rows(soc_results, pt_results)
-})
-
-# 全条件の結果を結合
-combined_results <- bind_rows(results)
+# ----------------------------------------------------------------------------
+# 使用例
+# ----------------------------------------------------------------------------
+# ard_pt_all <- jpn_query_summary_pt(ae_types, group_vars = )　# デフォルトの群変数はTRT01A
+# ard_pt_all <- jpn_query_summary_pt(ae_types, group_vars = c("SEX","TRT01A"))
