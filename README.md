@@ -1,4 +1,4 @@
-# admiralonco <img src="man/figures/logo.png" align="right" width="200" style="margin-left:50px;"/>
+# anaume <img src="man/figures/logo.png" align="right" width="200" style="margin-left:50px;"/>
 
 Package for generating analysis results for PMDA Query regarding adverse event in oncology therapeutic area `{anaume}`
 
