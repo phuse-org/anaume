@@ -141,7 +141,7 @@ merge_ae_types <- function(ae_types, id, label, op = c("&", "|")) {
   if (!is.list(ae_types) || length(ae_types) == 0) {
     cli::cli_abort("{.arg ae_types} must be a non-empty list.")
   }
-  if (!all(purrr::map_lgl(ae_types, inherits, "ae_type"))) {
+  if (!all(purrr::map_lgl(ae_types, \(x) inherits(x, "ae_type")))) {
     cli::cli_abort("All elements of {.arg ae_types} must be {.cls ae_type} objects.")
   }
   if (!rlang::is_string(id)) {
