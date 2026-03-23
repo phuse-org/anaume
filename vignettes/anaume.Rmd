@@ -1,0 +1,28 @@
+---
+title: "Gett started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Gett started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Anaysis for outputs required by PMDA in oncology
+`{anaume}` is a package to generate outputs required in oncology therapeutic area by PMDA.
+
+```{r setup}
+library(anaume)
+```
+
+# Setup for 
+
+```{r setup}
+library(anaume)
+```

@@ -8,3 +8,4 @@ docs
 anaume.Rcheck/
 anaume*.tar.gz
 anaume*.tgz
+inst/doc
