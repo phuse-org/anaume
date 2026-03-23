@@ -1,3 +1,5 @@
-^haqard\.Rproj$
+^anaume\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+^man/figures/\.gitkeep$
+^inst/dev$
