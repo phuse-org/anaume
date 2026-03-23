@@ -3,3 +3,14 @@
 ^data-raw$
 ^man/figures/\.gitkeep$
 ^inst/dev$
+^_pkgdown\.yml$
+^docs$
+^\.github$
+^specification\.html$
+^specification\.qmd$
+^specification_files$
+^sample_ard\.csv$
+^sample_ard_updated\.csv$
+^anaume\.Rcheck$
+^anaume.*\.tar\.gz$
+^anaume.*\.tgz$

@@ -4,3 +4,7 @@
 .httr-oauth
 .DS_Store
 .quarto
+docs
+anaume.Rcheck/
+anaume*.tar.gz
+anaume*.tgz
