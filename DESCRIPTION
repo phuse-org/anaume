@@ -1,27 +1,22 @@
 Package: anaume
-Title: What the Package Does (One Line, Title Case)
+Title: Adverse Event Analysis for PMDA query in oncology
 Version: 0.0.0.9000
 Authors@R: 
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Description: Provides utilities for summarizing adverse events for analysis required by PMDA in oncology therapeutic area.
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a license
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Depends: 
     R (>= 3.5)
 LazyData: true
-Imports: 
-    cards,
+Imports:
     cli,
     dplyr,
     purrr,
     rlang,
-    tidyselect
-Suggests: 
-    knitr,
-    rmarkdown,
+    cards
+Suggests:
     testthat (>= 3.0.0)
-VignetteBuilder: knitr
 Config/testthat/edition: 3
+RoxygenNote: 7.3.3
