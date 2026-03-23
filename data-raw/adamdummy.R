@@ -39,7 +39,9 @@ adae <- adae %>%
   )# %>%
   #bind_rows(., mutate(., TRT01A = "Total"))
 
-write_xpt(adsl, "~/haqard/data/adsl.xpt", version = 5)
-write_xpt(adae, "~/haqard/data/adae.xpt", version = 5)
+# write_xpt(adsl, "~/haqard/data/adsl.xpt", version = 5)
+# write_xpt(adae, "~/haqard/data/adae.xpt", version = 5)
 
-
+# adsl <- haven::read_xpt("inst/extdata/adsl.xpt")
+# adae <- haven::read_xpt("inst/extdata/adae.xpt")
+usethis::use_data(adsl, adae, overwrite = TRUE)
