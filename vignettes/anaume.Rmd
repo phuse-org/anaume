@@ -1,5 +1,5 @@
 ---
-title: "Gett started"
+title: "Get started"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Gett started}
@@ -22,7 +22,3 @@ library(anaume)
 ```
 
 # Setup for 
-
-```{r setup}
-library(anaume)
-```
