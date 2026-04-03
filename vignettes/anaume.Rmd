@@ -15,10 +15,26 @@ knitr::opts_chunk$set(
 ```
 
 # Anaysis for outputs required by PMDA in oncology
+
 `{anaume}` is a package to generate outputs required in oncology therapeutic area by PMDA.
 
-```{r setup}
+```{r}
 library(anaume)
 ```
 
-# Setup for 
+# Setup for dummy data
+
+Dummy data were based on `pharmaverseadam`.
+
+```{r}
+adae <- pharmaverseadam::adae
+adsl <- pharmaverseadam::adsl
+```
+
+# 
+
+# Define types of AE to be analyzed
+
+[To namai-san, please add MD here]
+
+# Generate ARD
