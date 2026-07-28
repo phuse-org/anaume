@@ -1,0 +1,119 @@
+---
+title: "仕様書： `generate_ard_summary` 関数"
+author: "Gemini"
+date: "2025-08-01"
+format:
+  html:
+    toc: true
+    toc-location: left
+    number-sections: true
+    code-fold: true
+---
+
+# 概要
+
+このドキュメントは、R関数 `generate_ard_summary` の仕様を定義します。
+
+この関数は、臨床試験の有害事象データ（ADAE）と被験者レベルデータ（ADSL）から、要約（Summary）用の解析結果データセット（ARD）を生成することを目的としています。
+
+# 関数定義
+
+```r
+generate_ard_summary(
+  data,
+  adsl,
+  trt_var = "TRT01A",
+  cross_tab = TRUE,
+  strat_var = "rel_grp"
+)
+```
+
+## 引数
+
+| 引数名      | 型      | 説明                                                                                                                            | デフォルト値 |
+| :---------- | :------ | :------------------------------------------------------------------------------------------------------------------------------ | :----------- |
+| `data`      | `data.frame` | 有害事象のデータセット（ADAEに相当）。                                                                                          | (なし)       |
+| `adsl`      | `data.frame` | 被験者レベルのデータセット（ADSLに相当）。                                                                                      | (なし)       |
+| `trt_var`   | `character`  | 治療群を示す変数名を指定します。                                                                                                | `"TRT01A"`   |
+| `cross_tab` | `logical`    | `TRUE`の場合、`strat_var` で指定した変数とのクロス集計を行います。`FALSE`の場合は、`trt_var` のみで集計します。                 | `TRUE`       |
+| `strat_var` | `character`  | クロス集計に使用する層別化変数の名前を指定します。                                                                              | `"rel_grp"`  |
+
+## 戻り値
+
+`data.frame` (tibble) を返します。このデータフレームは、以下の列を含むARD形式です。
+
+| 列名        | 型        | 説明                                                                 |
+| :---------- | :-------- | :------------------------------------------------------------------- |
+| `trt_var`   | (various) | 治療群。列名は `trt_var` 引数の値に依存します。                      |
+| `strat_var` | (various) | 層別化変数。列名は `strat_var` 引数の値に依存します。                |
+| `group`     | `character` | 有害事象のカテゴリ（例: "Any AE", "Any SAE"）。                      |
+| `label`     | `character` | 有害事象の詳細なラベル（例: "AE >= Grade 3"）。                      |
+| `stat_name` | `character` | 統計量の種類。"n" (人数), "p" (割合), "bigN" (総人数) のいずれか。 |
+| `stat`      | `numeric`   | 統計量の値。`stat_name`が "p" の場合はパーセント表記（0-100）。    |
+| `ord1`      | `numeric`   | 表の並び替えに使用する第1キー。                                      |
+| `ord2`      | `numeric`   | 表の並び替えに使用する第2キー。                                      |
+
+# 処理の詳細
+
+1.  **分母の計算**:
+    -   `adsl` データと `trt_var` 引数に基づき、治療群ごとの被験者数（`bigN`）を計算します。
+
+2.  **個別ARDの作成**:
+    -   内部ヘルパー関数 `create_ard` を使用し、以下の各有害事象カテゴリについて、被験者数（`n`）と割合（`p`）を計算します。
+        -   Any AE (`ANYAE`)
+        -   AE >= Grade 3 (`AEGRD`)
+        -   Any SAE (`AESER`)
+        -   Fatal SAEs (`AEFAT`)
+        -   AE leads drug withdraw (`AEDISCON`)
+        -   AE leads drug interrupt (`AEITRR`)
+        -   AE leads to dose reduction (`AEREDUCE`)
+    -   `cross_tab` 引数が `TRUE` の場合、`trt_var` と `strat_var` で層別化します。`FALSE` の場合は `trt_var` のみで層別化します。
+
+3.  **データの結合と整形**:
+    -   計算されたすべての個別ARDを `cardx::bind_ard` で結合します。
+    -   `dplyr::mutate` を使用して、`label`, `group`, `ord1`, `ord2` などの列を追加し、レポートに適した形式にデータを整形します。
+    -   割合（`p`）は100倍してパーセントに変換します。
+
+4.  **分母（bigN）行の追加**:
+    -   最終的なデータセットに、各治療群の総人数（`bigN`）を示す行を追加します。これは、`stat_name` 列が `"bigN"` となる行です。
+
+5.  **返却**:
+    -   整形されたARDデータフレームを返します。
+
+# 使用例
+
+```r
+# ライブラリのロード（例）
+library(dplyr)
+library(cardx)
+
+# ダミーデータの読み込み
+# source("data/adamdummy.R")
+# adae <- adamdummy$adae
+# adsl <- adamdummy$adsl
+
+# --- 使用例1: デフォルト設定（治療群 x rel_grp でクロス集計） ---
+# ard_cross <- generate_ard_summary(
+#   data = adae,
+#   adsl = adsl
+# )
+# print(ard_cross)
+
+# --- 使用例2: 治療群のみで集計 ---
+# ard_simple <- generate_ard_summary(
+#   data = adae,
+#   adsl = adsl,
+#   cross_tab = FALSE
+# )
+# print(ard_simple)
+
+# --- 使用例3: 異なる治療群変数と層別化変数を使用 ---
+# adsl2 <- adsl %>% mutate(TRT01A_custom = TRT01A)
+# ard_custom <- generate_ard_summary(
+#   data = adae,
+#   adsl = adsl2,
+#   trt_var = "TRT01A_custom",
+#   strat_var = "SEX"
+# )
+# print(ard_custom)
+```

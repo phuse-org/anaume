@@ -1,0 +1,40 @@
+---
+title: "Get started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Gett started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Anaysis for outputs required by PMDA in oncology
+
+`{anaume}` is a package to generate outputs required in oncology therapeutic area by PMDA.
+
+```{r}
+library(anaume)
+```
+
+# Setup for dummy data
+
+Dummy data were based on `pharmaverseadam`.
+
+```{r}
+adae <- pharmaverseadam::adae
+adsl <- pharmaverseadam::adsl
+```
+
+# 
+
+# Define types of AE to be analyzed
+
+[To namai-san, please add MD here]
+
+# Generate ARD

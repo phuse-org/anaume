@@ -1,0 +1,10 @@
+url: https://yuichi-nakaima.github.io/anaume/
+template:
+  bootstrap: 5
+lang: en
+title: anaume
+description: "{Package documentation for anaume}."
+repo:
+  url:
+    home: https://github.com/yuichi-nakaima/anaume
+    issue: https://github.com/yuichi-nakaima/anaume/issues

@@ -1,0 +1,72 @@
+TRT01A,rel_grp,group,label,stat_name,stat_label,stat,ord1,ord2
+Placebo,Related,Any AE,Any AE,n,n,44,0,0
+Placebo,Related,Any AE,Any AE,p,%,51.162790697674424,0,0
+Xanomeline High Dose,Related,Any AE,Any AE,n,n,65,0,0
+Xanomeline High Dose,Related,Any AE,Any AE,p,%,90.27777777777779,0,0
+Xanomeline Low Dose,Related,Any AE,Any AE,n,n,78,0,0
+Xanomeline Low Dose,Related,Any AE,Any AE,p,%,81.25,0,0
+Placebo,Unrelated,Any AE,Any AE,n,n,55,0,0
+Placebo,Unrelated,Any AE,Any AE,p,%,63.95348837209303,0,0
+Xanomeline High Dose,Unrelated,Any AE,Any AE,n,n,48,0,0
+Xanomeline High Dose,Unrelated,Any AE,Any AE,p,%,66.66666666666666,0,0
+Xanomeline Low Dose,Unrelated,Any AE,Any AE,n,n,51,0,0
+Xanomeline Low Dose,Unrelated,Any AE,Any AE,p,%,53.125,0,0
+Placebo,Related,Grade 3,AE >= Grade 3,n,n,41,1,1
+Placebo,Related,Grade 3,AE >= Grade 3,p,%,47.674418604651166,1,1
+Xanomeline High Dose,Related,Grade 3,AE >= Grade 3,n,n,57,1,1
+Xanomeline High Dose,Related,Grade 3,AE >= Grade 3,p,%,79.16666666666666,1,1
+Xanomeline Low Dose,Related,Grade 3,AE >= Grade 3,n,n,72,1,1
+Xanomeline Low Dose,Related,Grade 3,AE >= Grade 3,p,%,75,1,1
+Placebo,Unrelated,Grade 3,AE >= Grade 3,n,n,47,1,1
+Placebo,Unrelated,Grade 3,AE >= Grade 3,p,%,54.65116279069767,1,1
+Xanomeline High Dose,Unrelated,Grade 3,AE >= Grade 3,n,n,39,1,1
+Xanomeline High Dose,Unrelated,Grade 3,AE >= Grade 3,p,%,54.166666666666664,1,1
+Xanomeline Low Dose,Unrelated,Grade 3,AE >= Grade 3,n,n,43,1,1
+Xanomeline Low Dose,Unrelated,Grade 3,AE >= Grade 3,p,%,44.79166666666667,1,1
+Xanomeline High Dose,Related,Any SAE,Any SAE,n,n,0,1,0
+Xanomeline High Dose,Related,Any SAE,Any SAE,p,%,0,1,0
+Xanomeline Low Dose,Related,Any SAE,Any SAE,n,n,2,1,0
+Xanomeline Low Dose,Related,Any SAE,Any SAE,p,%,2.083333333333333,1,0
+Xanomeline High Dose,Unrelated,Any SAE,Any SAE,n,n,1,1,0
+Xanomeline High Dose,Unrelated,Any SAE,Any SAE,p,%,1.3888888888888888,1,0
+Xanomeline Low Dose,Unrelated,Any SAE,Any SAE,n,n,0,1,0
+Xanomeline Low Dose,Unrelated,Any SAE,Any SAE,p,%,0,1,0
+Placebo,Related,Dose related,AE leads drug withdraw,n,n,22,1,1
+Placebo,Related,Dose related,AE leads drug withdraw,p,%,25.581395348837212,1,1
+Xanomeline High Dose,Related,Dose related,AE leads drug withdraw,n,n,34,1,1
+Xanomeline High Dose,Related,Dose related,AE leads drug withdraw,p,%,47.22222222222222,1,1
+Xanomeline Low Dose,Related,Dose related,AE leads drug withdraw,n,n,47,1,1
+Xanomeline Low Dose,Related,Dose related,AE leads drug withdraw,p,%,48.95833333333333,1,1
+Placebo,Unrelated,Dose related,AE leads drug withdraw,n,n,27,1,1
+Placebo,Unrelated,Dose related,AE leads drug withdraw,p,%,31.3953488372093,1,1
+Xanomeline High Dose,Unrelated,Dose related,AE leads drug withdraw,n,n,21,1,1
+Xanomeline High Dose,Unrelated,Dose related,AE leads drug withdraw,p,%,29.166666666666668,1,1
+Xanomeline Low Dose,Unrelated,Dose related,AE leads drug withdraw,n,n,25,1,1
+Xanomeline Low Dose,Unrelated,Dose related,AE leads drug withdraw,p,%,26.041666666666668,1,1
+Placebo,Related,Dose related,AE leads drug interrupt,n,n,24,1,1
+Placebo,Related,Dose related,AE leads drug interrupt,p,%,27.906976744186046,1,1
+Xanomeline High Dose,Related,Dose related,AE leads drug interrupt,n,n,42,1,1
+Xanomeline High Dose,Related,Dose related,AE leads drug interrupt,p,%,58.333333333333336,1,1
+Xanomeline Low Dose,Related,Dose related,AE leads drug interrupt,n,n,51,1,1
+Xanomeline Low Dose,Related,Dose related,AE leads drug interrupt,p,%,53.125,1,1
+Placebo,Unrelated,Dose related,AE leads drug interrupt,n,n,28,1,1
+Placebo,Unrelated,Dose related,AE leads drug interrupt,p,%,32.55813953488372,1,1
+Xanomeline High Dose,Unrelated,Dose related,AE leads drug interrupt,n,n,33,1,1
+Xanomeline High Dose,Unrelated,Dose related,AE leads drug interrupt,p,%,45.83333333333333,1,1
+Xanomeline Low Dose,Unrelated,Dose related,AE leads drug interrupt,n,n,22,1,1
+Xanomeline Low Dose,Unrelated,Dose related,AE leads drug interrupt,p,%,22.916666666666664,1,1
+Placebo,Related,Dose related,AE leads to dose reduction,n,n,21,1,1
+Placebo,Related,Dose related,AE leads to dose reduction,p,%,24.418604651162788,1,1
+Xanomeline High Dose,Related,Dose related,AE leads to dose reduction,n,n,45,1,1
+Xanomeline High Dose,Related,Dose related,AE leads to dose reduction,p,%,62.5,1,1
+Xanomeline Low Dose,Related,Dose related,AE leads to dose reduction,n,n,53,1,1
+Xanomeline Low Dose,Related,Dose related,AE leads to dose reduction,p,%,55.208333333333336,1,1
+Placebo,Unrelated,Dose related,AE leads to dose reduction,n,n,27,1,1
+Placebo,Unrelated,Dose related,AE leads to dose reduction,p,%,31.3953488372093,1,1
+Xanomeline High Dose,Unrelated,Dose related,AE leads to dose reduction,n,n,22,1,1
+Xanomeline High Dose,Unrelated,Dose related,AE leads to dose reduction,p,%,30.555555555555557,1,1
+Xanomeline Low Dose,Unrelated,Dose related,AE leads to dose reduction,n,n,23,1,1
+Xanomeline Low Dose,Unrelated,Dose related,AE leads to dose reduction,p,%,23.958333333333336,1,1
+Placebo,NA,NA,NA,bigN,N,86,99,99
+Xanomeline High Dose,NA,NA,NA,bigN,N,72,99,99
+Xanomeline Low Dose,NA,NA,NA,bigN,N,96,99,99
