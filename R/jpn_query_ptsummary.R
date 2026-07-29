@@ -1,4 +1,4 @@
-#' Create ARD for adverse event overview (AETYPE × PT(AEDECOD))
+#' Create ARD for adverse event overview (by AETYPE and PT(AEDECOD))
 #'
 #' Convenience wrapper around [jpn_query_aggregate()] that summarizes data
 #' Aggregate by AETYPE and AEDECOD.
@@ -19,7 +19,7 @@
 #'
 #' @export
 
-# ARD Creation [AETYPE × PT(AEDECOD)]
+# ARD Creation [by AETYPE and PT(AEDECOD)]
 jpn_query_ptsummary <- function(
     data,
     denominator,
