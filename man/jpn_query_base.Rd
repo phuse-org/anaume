@@ -65,3 +65,4 @@ ard_pt <- jpn_query_base(
 }
 
 }
+\keyword{internal}

@@ -8,14 +8,18 @@
 #' @return A `{cards}` ARD object returned by `cards::ard_stack_hierarchical()`.
 #'
 #' @examples
-#' \dontrun{
-#' ard <- jpn_query_ptsummary(
-#'   data = adae,
-#'   denominator = adsl,
-#'   ae_types = ae_types,
-#'   by = TRT01A
+#' ae_types <- list(
+#'   make_ae_type("any_ae", "Any AE"),
+#'   make_ae_type("rel_ae", "Related AEs", AEREL == "Y")
 #' )
-#' }
+#'
+#' # AETYPE x PT (AEDECOD) summary, split by treatment arm
+#' jpn_query_ptsummary(
+#'   data        = adae,
+#'   denominator = adsl,
+#'   ae_types    = ae_types,
+#'   by          = TRT01A
+#' )
 #'
 #' @export
 

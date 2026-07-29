@@ -45,7 +45,7 @@
 #' )
 #' }
 #'
-#' @export
+#' @keywords internal
 #' @importFrom rlang enquo quo_is_null
 #' @importFrom dplyr select all_of group_vars
 #' @importFrom cards ard_stack_hierarchical

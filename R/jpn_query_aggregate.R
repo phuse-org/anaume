@@ -21,22 +21,27 @@
 #' @return A `{cards}` ARD object returned by `cards::ard_stack_hierarchical()`.
 #'
 #' @examples
-#' \dontrun{
-#' ard <- jpn_query_aggregate(
-#'   data = adae,
-#'   denominator = adsl,
-#'   ae_types = ae_types,
-#'   by = TRT01A
+#' ae_types <- list(
+#'   make_ae_type("any_ae", "Any AE"),
+#'   make_ae_type("rel_ae", "Related AEs", AEREL == "Y")
 #' )
 #'
-#' ard_pt <- jpn_query_aggregate(
-#'   data = adae,
+#' # AETYPE-level summary, split by treatment arm
+#' jpn_query_aggregate(
+#'   data        = adae,
 #'   denominator = adsl,
-#'   ae_types = ae_types,
-#'   by = TRT01A,
-#'   variables = AEDECOD
+#'   ae_types    = ae_types,
+#'   by          = TRT01A
 #' )
-#' }
+#'
+#' # Add preferred term (AEDECOD) as an additional summary variable
+#' jpn_query_aggregate(
+#'   data        = adae,
+#'   denominator = adsl,
+#'   ae_types    = ae_types,
+#'   by          = TRT01A,
+#'   variables   = AEDECOD
+#' )
 #'
 #' @export
 #' @importFrom cards ard_stack_hierarchical
