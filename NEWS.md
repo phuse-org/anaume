@@ -1,4 +1,3 @@
-# anaume (development version)
+# anaume 0.1.0
 
-# scaffoldr 0.1.0
-This is the first release of anaume.
+* Initial release of anaume.
