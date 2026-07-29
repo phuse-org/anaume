@@ -14,3 +14,4 @@
 ^anaume\.Rcheck$
 ^anaume.*\.tar\.gz$
 ^anaume.*\.tgz$
+^LICENSE$
