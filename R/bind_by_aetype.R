@@ -44,6 +44,7 @@ bind_by_aetype <- function(data, ae_types, verbose = FALSE) {
 #' @param label_col A character string specifying the name of the label column (default: "label").
 #' @return A data.frame with added columns `id`, `label` (or custom label column).
 #' @importFrom dplyr filter mutate
+#' @importFrom rlang :=
 #' @keywords internal
 apply_ae_type <- function(data, ae_type, label_col = "label") {
   stopifnot(inherits(ae_type, "ae_type"))
