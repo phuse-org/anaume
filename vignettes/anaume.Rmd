@@ -12,6 +12,11 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+# The vignette uses example data from the suggested package {pharmaverseadam}.
+# Only evaluate the data-dependent chunks when it is available.
+has_pharmaverseadam <- requireNamespace("pharmaverseadam", quietly = TRUE)
+knitr::opts_chunk$set(eval = has_pharmaverseadam)
 ```
 
 # Anaysis for outputs required by PMDA in oncology
@@ -24,7 +29,8 @@ library(anaume)
 
 # Setup for dummy data
 
-Dummy data were based on `pharmaverseadam`.
+Dummy data are based on the `pharmaverseadam` package. Install it with
+`install.packages("pharmaverseadam")` to run the examples below.
 
 ```{r}
 adae <- pharmaverseadam::adae
