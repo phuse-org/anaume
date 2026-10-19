@@ -2,7 +2,7 @@
 title: "Get started"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Gett started}
+  %\VignetteIndexEntry{Get started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,7 +19,7 @@ has_pharmaverseadam <- requireNamespace("pharmaverseadam", quietly = TRUE)
 knitr::opts_chunk$set(eval = has_pharmaverseadam)
 ```
 
-# Anaysis for outputs required by PMDA in oncology
+# Analysis for outputs required by PMDA in oncology
 
 `{anaume}` is a package to generate outputs required in oncology therapeutic area by PMDA.
 
@@ -37,10 +37,28 @@ adae <- pharmaverseadam::adae
 adsl <- pharmaverseadam::adsl
 ```
 
-# 
-
 # Define types of AE to be analyzed
 
-[To namai-san, please add MD here]
+Use `make_ae_type()` to define each adverse event category to summarize.
+A category can be unconditional (all AEs) or defined by a filtering condition.
+
+```{r}
+ae_types <- list(
+  make_ae_type("any_ae", "Any AE"),
+  make_ae_type("rel_ae", "Related AEs", AEREL == "Y")
+)
+```
 
 # Generate ARD
+
+Pass the data, denominator, and AE types to `jpn_query_overview()` to create an
+analysis-ready data (ARD) object summarized at the AETYPE level.
+
+```{r}
+jpn_query_overview(
+  data        = adae,
+  denominator = adsl,
+  ae_types    = ae_types,
+  by          = TRT01A
+)
+```
