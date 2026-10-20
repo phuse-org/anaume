@@ -85,7 +85,7 @@ all_ard_temp <- bind_ard(ard_ae, ard_aeg3, ard_fatal, ard_sae, ard_disc, ard_itr
 
 all_ard <- bind_rows(all_ard_temp, big_n_data)
 
-write_csv(all_ard, here("sample_ard.csv"))
+write_csv(all_ard, here("inst", "dev", "sample_ard.csv"))
 
 # Create table with formatting
 AE_sample <- tfrmt_n_pct(n = "n", pct = "p") |>
