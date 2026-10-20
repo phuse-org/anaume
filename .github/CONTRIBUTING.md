@@ -31,7 +31,9 @@
 
 5. Pull Request を作成する
 
-CRAN 提出に関する詳細な要件・手順は
+CRAN 登録に特有の一般要件と検証ツールは
+[`.github/CRAN-REQUIREMENTS.md`](CRAN-REQUIREMENTS.md)、
+`{anaume}` 固有の提出手順・チェックリストは
 [`.github/CRAN-SUBMISSION.md`](CRAN-SUBMISSION.md) を参照してください。
 
 ---
