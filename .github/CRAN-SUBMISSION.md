@@ -87,7 +87,75 @@ devtools::check(args = "--as-cran")
 
 ---
 
-## 5. 参考リンク
+## 5. CRAN への提出手順
+
+### 5.1 提出の前提条件（提出ボタンを押す前に）
+
+- 「1. 提出前チェックリスト」がすべて完了している
+- `cran-comments.md` が最新の `R CMD check` / win-builder 結果と一致している
+- **メンテナ (`cre`) のメールアドレスで確認メールを受け取れる**こと
+  （`shunsuke.goto@novartis.com`。企業メールの場合、CRAN からの外部メールが
+  スパム/隔離されないか事前に確認する）
+
+### 5.2 共著者の同意（CRAN ポリシー）
+
+`DESCRIPTION` の `aut`（著者）全員が提出に同意している必要があります。
+本パッケージは以下の 5 名が関与しています。提出前に全員の合意を得てください。
+
+- Shunsuke Goto（cre, aut）
+- Tomoyuki Namai（aut）
+- Hiro Kosako（aut）
+- Yuichi Nakajima（aut）
+- Hiroki Yamanobe（aut）
+
+### 5.3 提出の方法
+
+いずれか一方で提出します。
+
+**方法 A: R から提出（推奨）**
+
+```r
+devtools::submit_cran()
+```
+
+実行すると tarball がビルドされ、CRAN の提出フォームへ送信されます。
+`cran-comments.md` の内容が自動的にコメント欄へ添付されます。
+
+**方法 B: Web フォームから提出**
+
+1. tarball を作成する（「3. ローカルでの手順」参照）
+2. <https://cran.r-project.org/submit.html> を開く
+3. パッケージ名・バージョン・メンテナ情報・tarball をアップロード
+4. `cran-comments.md` の内容をコメント欄に貼り付ける
+
+### 5.4 提出後の対応
+
+1. **確認メールのクリック**
+   提出直後、メンテナ宛に確認メール（subject に `CRAN submission` 等）が届く。
+   本文のリンクをクリックして提出を確定する。**これを行わないと受理されない。**
+
+2. **自動チェックの結果を待つ**
+   CRAN の incoming でマルチプラットフォームの自動チェックが走る。
+   問題があればメールで通知される。
+
+3. **人手レビュー**
+   新規パッケージ（New submission）は CRAN チームによる手動レビューが入る。
+   数日〜1 週間程度かかり、軽微な指摘で 1〜2 往復することが多い。
+
+4. **指摘への対応**
+   指摘が来たら、該当箇所を修正し、`DESCRIPTION` の `Version` を上げ、
+   `cran-comments.md` に対応内容（Resubmission）を追記して再提出する。
+
+### 5.5 受理後の対応
+
+- Git にリリースタグを打つ（例: `git tag v0.1.0 && git push --tags`）
+- GitHub Release を作成する（pkgdown ワークフローの `release` トリガで
+  サイトも更新される）
+- 次の開発に向けて `Version` を開発版（例: `0.1.0.9000`）へ更新する
+
+---
+
+## 6. 参考リンク
 
 - CRAN Repository Policy: <https://cran.r-project.org/web/packages/policies.html>
 - Writing R Extensions: <https://cran.r-project.org/doc/manuals/r-release/R-exts.html>
