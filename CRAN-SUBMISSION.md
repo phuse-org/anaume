@@ -95,6 +95,90 @@ GitHub で R パッケージを公開するのと異なり、CRAN への登録�
 
 ------------------------------------------------------------------------
 
+## 0-2. §0 の要件を検証するツール / コマンド
+
+§0 で挙げた要件の多く（特に A〜D）は、**ツールで機械的に判定できます**。
+ここでは要件カテゴリごとに対応するツールを示します。
+
+### 中核: `R CMD check --as-cran`
+
+**最も重要**なツールです。`--as-cran` を付けると通常チェックに加えて
+**CRAN 固有のポリシー検査が有効化**されます。これ 1 つで §0 の A〜D の
+大半を検査できます。
+
+``` r
+
+devtools::check(args = "--as-cran")   # ラッパー（推奨）
+# または
+# R CMD check --as-cran anaume_0.1.0.tar.gz
+```
+
+| §0 の要件               | `--as-cran` での対応チェック項目        |
+|-------------------------|-----------------------------------------|
+| \(A\) DESCRIPTION 形式  | `checking DESCRIPTION meta-information` |
+| \(A\) Title Case / 文章 | `checking CRAN incoming feasibility`    |
+| \(A\) メール有効性      | `checking CRAN incoming feasibility`    |
+| \(A\) License 標準表記  | 非標準なら警告                          |
+| \(B\) ERROR / WARNING   | 全チェック項目                          |
+| \(C\) 実行時間          | `checking examples` / `checking tests`  |
+| \(C\) 無効 URL          | `checking URLs`（`--as-cran` 時のみ）   |
+| \(D\) 非標準ファイル    | `checking top-level files`              |
+| \(D\) tarball サイズ    | `checking installed package size`       |
+
+### 要件別の補助ツール
+
+| 要件 | ツール / コマンド | 用途 |
+|----|----|----|
+| \(A\) スペル・文章 | `spelling::spell_check_package()` | Description・ドキュメントのスペルチェック |
+| \(A\) License 標準表記 | `tools:::analyze_license("...")` | `is_standardizable = TRUE` を確認 |
+| \(C\) URL 検証 | `urlchecker::url_check()` | DESCRIPTION/Rd/md 内の全 URL の応答を検証 |
+| \(C\) 多環境動作 | `devtools::check_win_devel()` / `check_win_release()` | Windows × R-devel/release（本書 §3-2） |
+| \(C\) 多環境動作 | `rhub::rhub_check()` | R-hub v2 で Linux/macOS/Windows 横断 |
+| \(B\) 提出後の状況 | `foghorn::cran_results("anaume")` | 提出済みパッケージの CRAN チェック結果を取得 |
+
+### 統合: リリース支援ツール
+
+``` r
+
+devtools::release()            # 提出前チェックを総ざらいし対話的に提出まで導く
+usethis::use_release_issue()   # GitHub Issue にリリース用チェックリストを自動生成
+```
+
+### 推奨する実行順序
+
+``` r
+
+# 1. ドキュメント同期
+devtools::document()
+
+# 2. スペルチェック（(A) 補助）
+spelling::spell_check_package()
+
+# 3. URL 検証（(C)）
+urlchecker::url_check()
+
+# 4. 本体チェック（(A)(B)(C)(D) の大半）★最重要
+devtools::check(args = "--as-cran")
+
+# 5. 多環境チェック（(C)）
+devtools::check_win_devel()
+devtools::check_win_release()
+```
+
+### ⚠️ 自動判定できない要件（人手必須）
+
+次の項目は**ツールでは判定できません**。本書 §5
+の手順で人的に対応します。
+
+| 要件 | 理由 |
+|----|----|
+| \(A\) Description が「意味的に完全な文か」 | 文意の理解は不可（スペルは `spelling` で部分的に補助） |
+| \(E\) 全著者の同意 | 人的合意 |
+| \(E\) 確認メールのクリック | 手動操作 |
+| \(E\) 継続メンテナンス責任 | 約束事 |
+
+------------------------------------------------------------------------
+
 ## 1. 提出前チェックリスト
 
 `DESCRIPTION` の `Version` を更新した

@@ -125,6 +125,109 @@
 </tr></tbody></table><hr></div>
 </div>
 <div class="section level2">
+<h2 id="id_0-2-0-の要件を検証するツール--コマンド">0-2. §0 の要件を検証するツール / コマンド<a class="anchor" aria-label="anchor" href="#id_0-2-0-%E3%81%AE%E8%A6%81%E4%BB%B6%E3%82%92%E6%A4%9C%E8%A8%BC%E3%81%99%E3%82%8B%E3%83%84%E3%83%BC%E3%83%AB--%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89"></a></h2>
+<p>§0 で挙げた要件の多く（特に A〜D）は、<strong>ツールで機械的に判定できます</strong>。 ここでは要件カテゴリごとに対応するツールを示します。</p>
+<div class="section level3">
+<h3 id="中核-r-cmd-check---as-cran">中核: <code>R CMD check --as-cran</code>
+<a class="anchor" aria-label="anchor" href="#%E4%B8%AD%E6%A0%B8-r-cmd-check---as-cran"></a></h3>
+<p><strong>最も重要</strong>なツールです。<code>--as-cran</code> を付けると通常チェックに加えて <strong>CRAN 固有のポリシー検査が有効化</strong>されます。これ 1 つで §0 の A〜D の 大半を検査できます。</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check</span><span class="op">(</span>args <span class="op">=</span> <span class="st">"--as-cran"</span><span class="op">)</span>   <span class="co"># ラッパー（推奨）</span></span>
+<span><span class="co"># または</span></span>
+<span><span class="co"># R CMD check --as-cran anaume_0.1.0.tar.gz</span></span></code></pre></div>
+<table class="table"><thead><tr><th>§0 の要件</th>
+<th>
+<code>--as-cran</code> での対応チェック項目</th>
+</tr></thead><tbody><tr><td>(A) DESCRIPTION 形式</td>
+<td><code>checking DESCRIPTION meta-information</code></td>
+</tr><tr><td>(A) Title Case / 文章</td>
+<td><code>checking CRAN incoming feasibility</code></td>
+</tr><tr><td>(A) メール有効性</td>
+<td><code>checking CRAN incoming feasibility</code></td>
+</tr><tr><td>(A) License 標準表記</td>
+<td>非標準なら警告</td>
+</tr><tr><td>(B) ERROR / WARNING</td>
+<td>全チェック項目</td>
+</tr><tr><td>(C) 実行時間</td>
+<td>
+<code>checking examples</code> / <code>checking tests</code>
+</td>
+</tr><tr><td>(C) 無効 URL</td>
+<td>
+<code>checking URLs</code>（<code>--as-cran</code> 時のみ）</td>
+</tr><tr><td>(D) 非標準ファイル</td>
+<td><code>checking top-level files</code></td>
+</tr><tr><td>(D) tarball サイズ</td>
+<td><code>checking installed package size</code></td>
+</tr></tbody></table></div>
+<div class="section level3">
+<h3 id="要件別の補助ツール">要件別の補助ツール<a class="anchor" aria-label="anchor" href="#%E8%A6%81%E4%BB%B6%E5%88%A5%E3%81%AE%E8%A3%9C%E5%8A%A9%E3%83%84%E3%83%BC%E3%83%AB"></a></h3>
+<table class="table"><colgroup><col width="20%"><col width="60%"><col width="20%"></colgroup><thead><tr><th>要件</th>
+<th>ツール / コマンド</th>
+<th>用途</th>
+</tr></thead><tbody><tr><td>(A) スペル・文章</td>
+<td><code>spelling::spell_check_package()</code></td>
+<td>Description・ドキュメントのスペルチェック</td>
+</tr><tr><td>(A) License 標準表記</td>
+<td><code>tools:::analyze_license("...")</code></td>
+<td>
+<code>is_standardizable = TRUE</code> を確認</td>
+</tr><tr><td>(C) URL 検証</td>
+<td><code>urlchecker::url_check()</code></td>
+<td>DESCRIPTION/Rd/md 内の全 URL の応答を検証</td>
+</tr><tr><td>(C) 多環境動作</td>
+<td>
+<code>devtools::check_win_devel()</code> / <code>check_win_release()</code>
+</td>
+<td>Windows × R-devel/release（本書 §3-2）</td>
+</tr><tr><td>(C) 多環境動作</td>
+<td><code>rhub::rhub_check()</code></td>
+<td>R-hub v2 で Linux/macOS/Windows 横断</td>
+</tr><tr><td>(B) 提出後の状況</td>
+<td><code>foghorn::cran_results("anaume")</code></td>
+<td>提出済みパッケージの CRAN チェック結果を取得</td>
+</tr></tbody></table></div>
+<div class="section level3">
+<h3 id="統合-リリース支援ツール">統合: リリース支援ツール<a class="anchor" aria-label="anchor" href="#%E7%B5%B1%E5%90%88-%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E6%94%AF%E6%8F%B4%E3%83%84%E3%83%BC%E3%83%AB"></a></h3>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">release</span><span class="op">(</span><span class="op">)</span>            <span class="co"># 提出前チェックを総ざらいし対話的に提出まで導く</span></span>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_release_issue</span><span class="op">(</span><span class="op">)</span>   <span class="co"># GitHub Issue にリリース用チェックリストを自動生成</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="推奨する実行順序">推奨する実行順序<a class="anchor" aria-label="anchor" href="#%E6%8E%A8%E5%A5%A8%E3%81%99%E3%82%8B%E5%AE%9F%E8%A1%8C%E9%A0%86%E5%BA%8F"></a></h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 1. ドキュメント同期</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">document</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 2. スペルチェック（(A) 補助）</span></span>
+<span><span class="fu">spelling</span><span class="fu">::</span><span class="fu">spell_check_package</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 3. URL 検証（(C)）</span></span>
+<span><span class="fu">urlchecker</span><span class="fu">::</span><span class="fu">url_check</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 4. 本体チェック（(A)(B)(C)(D) の大半）★最重要</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check</span><span class="op">(</span>args <span class="op">=</span> <span class="st">"--as-cran"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 5. 多環境チェック（(C)）</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check_win_devel</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check_win_release</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="warning-自動判定できない要件人手必須">⚠️ 自動判定できない要件（人手必須）<a class="anchor" aria-label="anchor" href="#warning-%E8%87%AA%E5%8B%95%E5%88%A4%E5%AE%9A%E3%81%A7%E3%81%8D%E3%81%AA%E3%81%84%E8%A6%81%E4%BB%B6%E4%BA%BA%E6%89%8B%E5%BF%85%E9%A0%88"></a></h3>
+<p>次の項目は<strong>ツールでは判定できません</strong>。本書 §5 の手順で人的に対応します。</p>
+<table class="table"><colgroup><col width="50%"><col width="50%"></colgroup><thead><tr><th>要件</th>
+<th>理由</th>
+</tr></thead><tbody><tr><td>(A) Description が「意味的に完全な文か」</td>
+<td>文意の理解は不可（スペルは <code>spelling</code> で部分的に補助）</td>
+</tr><tr><td>(E) 全著者の同意</td>
+<td>人的合意</td>
+</tr><tr><td>(E) 確認メールのクリック</td>
+<td>手動操作</td>
+</tr><tr><td>(E) 継続メンテナンス責任</td>
+<td>約束事</td>
+</tr></tbody></table><hr></div>
+</div>
+<div class="section level2">
 <h2 id="id_1-提出前チェックリスト">1. 提出前チェックリスト<a class="anchor" aria-label="anchor" href="#id_1-%E6%8F%90%E5%87%BA%E5%89%8D%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%88"></a></h2>
 <ul class="task-list"><li><label><input type="checkbox"><code>DESCRIPTION</code> の <code>Version</code> を更新した</label></li>
 <li><label><input type="checkbox"><code>NEWS.md</code> に今回のリリース内容を追記した</label></li>
@@ -160,7 +263,7 @@
 <h2 id="id_3-ローカルでの-r-cmd-check---as-cran">3. ローカルでの <code>R CMD check --as-cran</code>
 <a class="anchor" aria-label="anchor" href="#id_3-%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7%E3%81%AE-r-cmd-check---as-cran"></a></h2>
 <p>開発ツール（Rtools / Pandoc / qpdf）が正しく揃った環境であれば、以下だけで チェックできます。</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check</span><span class="op">(</span>args <span class="op">=</span> <span class="st">"--as-cran"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="補足-環境が未整備の場合の回避策">補足: 環境が未整備の場合の回避策<a class="anchor" aria-label="anchor" href="#%E8%A3%9C%E8%B6%B3-%E7%92%B0%E5%A2%83%E3%81%8C%E6%9C%AA%E6%95%B4%E5%82%99%E3%81%AE%E5%A0%B4%E5%90%88%E3%81%AE%E5%9B%9E%E9%81%BF%E7%AD%96"></a></h3>
@@ -168,22 +271,22 @@
 <p>ここで述べる Rtools 非互換や Pandoc 未検出は <strong>特定の開発 PC の環境問題</strong> であり、パッケージ自体の問題ではありません。本来は Rtools / Pandoc を 正しく導入すれば上記 1 行で済みます。環境を整備できない場合の一時的な 回避策として以下を記録します。</p>
 </blockquote>
 <p>Rtools がインストール済み R のバージョンと非互換だと <code>devtools::check()</code> は ビルド段階で失敗することがあります。その場合は <code>R CMD build</code> / <code>R CMD check</code> を直接呼び出し、Pandoc は別途導入済みのもの（例: RStudio 同梱）を環境変数で 指定します。</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Pandoc のパスを環境変数に設定（導入済みの場所に合わせる）</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="va">$pandocDir</span> <span class="op">=</span> <span class="st">"&lt;pandoc.exe のあるディレクトリ&gt;"</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">RSTUDIO_PANDOC</span> <span class="op">=</span> <span class="va">$pandocDir</span></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">PATH</span> <span class="op">=</span> <span class="va">$pandocDir</span> <span class="op">+</span> <span class="st">";"</span> <span class="op">+</span> <span class="va">$env</span><span class="op">:</span><span class="va">PATH</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co"># tarball をビルド（vignette 込み、PDF マニュアルは省略）</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="fu">R</span> CMD build <span class="op">.</span> <span class="op">--</span>no-manual</span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co"># as-cran チェック</span></span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="fu">R</span> CMD check anaume_0<span class="op">.</span><span class="dv">1.0</span><span class="op">.</span><span class="fu">tar</span><span class="op">.</span><span class="fu">gz</span> <span class="op">--</span>as-cran <span class="op">--</span>no-manual</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Pandoc のパスを環境変数に設定（導入済みの場所に合わせる）</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="va">$pandocDir</span> <span class="op">=</span> <span class="st">"&lt;pandoc.exe のあるディレクトリ&gt;"</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">RSTUDIO_PANDOC</span> <span class="op">=</span> <span class="va">$pandocDir</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">PATH</span> <span class="op">=</span> <span class="va">$pandocDir</span> <span class="op">+</span> <span class="st">";"</span> <span class="op">+</span> <span class="va">$env</span><span class="op">:</span><span class="va">PATH</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co"># tarball をビルド（vignette 込み、PDF マニュアルは省略）</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="fu">R</span> CMD build <span class="op">.</span> <span class="op">--</span>no-manual</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co"># as-cran チェック</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="fu">R</span> CMD check anaume_0<span class="op">.</span><span class="dv">1.0</span><span class="op">.</span><span class="fu">tar</span><span class="op">.</span><span class="fu">gz</span> <span class="op">--</span>as-cran <span class="op">--</span>no-manual</span></code></pre></div>
 <hr></div>
 </div>
 <div class="section level2">
 <h2 id="id_3-2-win-builder-でのチェックcran-と同等の-windows-環境">3-2. win-builder でのチェック（CRAN と同等の Windows 環境）<a class="anchor" aria-label="anchor" href="#id_3-2-win-builder-%E3%81%A7%E3%81%AE%E3%83%81%E3%82%A7%E3%83%83%E3%82%AFcran-%E3%81%A8%E5%90%8C%E7%AD%89%E3%81%AE-windows-%E7%92%B0%E5%A2%83"></a></h2>
 <p>ローカル環境に依存せず、CRAN が実際に使う Windows 環境でチェックできます。 tarball がサーバーへアップロードされ、<strong>結果はメンテナのメール宛に届きます</strong> （通常 15〜30 分、混雑時は数時間）。CRAN は提出時に devel・release の両方で チェックするため、<strong>両方を実行しておく</strong>ことを推奨します。</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check_win_devel</span><span class="op">(</span><span class="op">)</span>     <span class="co"># 開発版 R (R-devel)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check_win_release</span><span class="op">(</span><span class="op">)</span>   <span class="co"># 安定版 R (R-release)</span></span></code></pre></div>
 <div class="section level3">
@@ -276,7 +379,7 @@
 <h3 id="id_53-提出の方法">5.3 提出の方法<a class="anchor" aria-label="anchor" href="#id_53-%E6%8F%90%E5%87%BA%E3%81%AE%E6%96%B9%E6%B3%95"></a></h3>
 <p>いずれか一方で提出します。</p>
 <p><strong>方法 A: R から提出（推奨）</strong></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">submit_cran</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>実行すると tarball がビルドされ、CRAN の提出フォームへ送信されます。 <code>cran-comments.md</code> の内容が自動的にコメント欄へ添付されます。</p>
 <p><strong>方法 B: Web フォームから提出</strong></p>
