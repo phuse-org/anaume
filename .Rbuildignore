@@ -15,3 +15,4 @@
 ^anaume.*\.tar\.gz$
 ^anaume.*\.tgz$
 ^LICENSE$
+^cran-comments\.md$
