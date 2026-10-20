@@ -36,7 +36,10 @@
 
 5.  Pull Request を作成する
 
-CRAN 提出に関する詳細な要件・手順は
+CRAN 登録に特有の一般要件と検証ツールは
+[`.github/CRAN-REQUIREMENTS.md`](https://phuse-org.github.io/anaume/CRAN-REQUIREMENTS.md)、
+[anaume](https://github.com/phuse-org/anaume)
+固有の提出手順・チェックリストは
 [`.github/CRAN-SUBMISSION.md`](https://phuse-org.github.io/anaume/CRAN-SUBMISSION.md)
 を参照してください。
 
