@@ -7,7 +7,9 @@ event in oncology therapeutic area
 ## Purpose
 
 To Create analysis results for PMDA Query regarding adverse event in
-oncology therapeutic area. \## Installation
+oncology therapeutic area.
+
+## Installation
 
 Install the current release from CRAN:
 
