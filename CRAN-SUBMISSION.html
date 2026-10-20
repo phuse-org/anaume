@@ -45,6 +45,7 @@
 <li><label><input type="checkbox"><code>roxygen2::roxygenise()</code>（または <code>devtools::document()</code>）を実行し、 <code>NAMESPACE</code> と <code>man/*.Rd</code> が最新ソースと同期している</label></li>
 <li><label><input type="checkbox">ローカルで <code>R CMD check --as-cran</code> が ERROR / WARNING なしで通る （残 NOTE は「2. 既知の環境依存 NOTE」を参照）</label></li>
 <li><label><input type="checkbox"><code>devtools::check_win_devel()</code> を実行し、結果メールを確認した</label></li>
+<li><label><input type="checkbox"><code>devtools::check_win_release()</code> を実行し、結果メールを確認した</label></li>
 <li><label><input type="checkbox">（推奨）R-hub など複数プラットフォームでチェックした</label></li>
 <li><label><input type="checkbox"><code>cran-comments.md</code> を用意した（提出時に CRAN へ伝えるコメント）</label></li>
 <li><label><input type="checkbox">すべての <code>aut</code>（共著者）から CRAN 提出の同意を得た</label></li>
@@ -70,22 +71,59 @@
 <td>新規パッケージでは必ず付く（正常）</td>
 </tr></tbody></table><hr></div>
 <div class="section level2">
-<h2 id="id_3-ローカルでの-r-cmd-check---as-cran-手順windows">3. ローカルでの <code>R CMD check --as-cran</code> 手順（Windows）<a class="anchor" aria-label="anchor" href="#id_3-%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7%E3%81%AE-r-cmd-check---as-cran-%E6%89%8B%E9%A0%86windows"></a></h2>
-<p>この環境では Rtools が R 4.4.0 と非互換のため <code>devtools::check()</code> は ビルド段階で失敗することがあります。その場合は <code>R CMD build</code> / <code>R CMD check</code> を直接呼び出します。Pandoc は RStudio 同梱のものを利用します。</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Pandoc (RStudio 同梱) を環境変数に設定</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="va">$pandocDir</span> <span class="op">=</span> <span class="st">"C:\Program Files\RStudio\resources\app\bin\quarto\bin\tools"</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">RSTUDIO_PANDOC</span> <span class="op">=</span> <span class="va">$pandocDir</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">PATH</span> <span class="op">=</span> <span class="va">$pandocDir</span> <span class="op">+</span> <span class="st">";"</span> <span class="op">+</span> <span class="va">$env</span><span class="op">:</span><span class="va">PATH</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co"># tarball をビルド（vignette 込み、PDF マニュアルは省略）</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="op">&amp;</span> <span class="st">"C:\Program Files\R\R-4.4.0\bin\R.exe"</span> CMD build <span class="op">.</span> <span class="op">--</span>no-manual</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co"># as-cran チェック</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="op">&amp;</span> <span class="st">"C:\Program Files\R\R-4.4.0\bin\R.exe"</span> CMD check anaume_0<span class="op">.</span><span class="dv">1.0</span><span class="op">.</span><span class="fu">tar</span><span class="op">.</span><span class="fu">gz</span> <span class="op">--</span>as-cran <span class="op">--</span>no-manual</span></code></pre></div>
-<p>Pandoc / Rtools / qpdf が揃った環境であれば、通常どおり以下でも可:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<h2 id="id_3-ローカルでの-r-cmd-check---as-cran">3. ローカルでの <code>R CMD check --as-cran</code>
+<a class="anchor" aria-label="anchor" href="#id_3-%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7%E3%81%AE-r-cmd-check---as-cran"></a></h2>
+<p>開発ツール（Rtools / Pandoc / qpdf）が正しく揃った環境であれば、以下だけで チェックできます。</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check</span><span class="op">(</span>args <span class="op">=</span> <span class="st">"--as-cran"</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="補足-環境が未整備の場合の回避策">補足: 環境が未整備の場合の回避策<a class="anchor" aria-label="anchor" href="#%E8%A3%9C%E8%B6%B3-%E7%92%B0%E5%A2%83%E3%81%8C%E6%9C%AA%E6%95%B4%E5%82%99%E3%81%AE%E5%A0%B4%E5%90%88%E3%81%AE%E5%9B%9E%E9%81%BF%E7%AD%96"></a></h3>
+<blockquote>
+<p>ここで述べる Rtools 非互換や Pandoc 未検出は <strong>特定の開発 PC の環境問題</strong> であり、パッケージ自体の問題ではありません。本来は Rtools / Pandoc を 正しく導入すれば上記 1 行で済みます。環境を整備できない場合の一時的な 回避策として以下を記録します。</p>
+</blockquote>
+<p>Rtools がインストール済み R のバージョンと非互換だと <code>devtools::check()</code> は ビルド段階で失敗することがあります。その場合は <code>R CMD build</code> / <code>R CMD check</code> を直接呼び出し、Pandoc は別途導入済みのもの（例: RStudio 同梱）を環境変数で 指定します。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Pandoc のパスを環境変数に設定（導入済みの場所に合わせる）</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="va">$pandocDir</span> <span class="op">=</span> <span class="st">"&lt;pandoc.exe のあるディレクトリ&gt;"</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">RSTUDIO_PANDOC</span> <span class="op">=</span> <span class="va">$pandocDir</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">PATH</span> <span class="op">=</span> <span class="va">$pandocDir</span> <span class="op">+</span> <span class="st">";"</span> <span class="op">+</span> <span class="va">$env</span><span class="op">:</span><span class="va">PATH</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co"># tarball をビルド（vignette 込み、PDF マニュアルは省略）</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="fu">R</span> CMD build <span class="op">.</span> <span class="op">--</span>no-manual</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co"># as-cran チェック</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="fu">R</span> CMD check anaume_0<span class="op">.</span><span class="dv">1.0</span><span class="op">.</span><span class="fu">tar</span><span class="op">.</span><span class="fu">gz</span> <span class="op">--</span>as-cran <span class="op">--</span>no-manual</span></code></pre></div>
 <hr></div>
+</div>
+<div class="section level2">
+<h2 id="id_3-2-win-builder-でのチェックcran-と同等の-windows-環境">3-2. win-builder でのチェック（CRAN と同等の Windows 環境）<a class="anchor" aria-label="anchor" href="#id_3-2-win-builder-%E3%81%A7%E3%81%AE%E3%83%81%E3%82%A7%E3%83%83%E3%82%AFcran-%E3%81%A8%E5%90%8C%E7%AD%89%E3%81%AE-windows-%E7%92%B0%E5%A2%83"></a></h2>
+<p>ローカル環境に依存せず、CRAN が実際に使う Windows 環境でチェックできます。 tarball がサーバーへアップロードされ、<strong>結果はメンテナのメール宛に届きます</strong> （通常 15〜30 分、混雑時は数時間）。CRAN は提出時に devel・release の両方で チェックするため、<strong>両方を実行しておく</strong>ことを推奨します。</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check_win_devel</span><span class="op">(</span><span class="op">)</span>     <span class="co"># 開発版 R (R-devel)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check_win_release</span><span class="op">(</span><span class="op">)</span>   <span class="co"># 安定版 R (R-release)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="check_win_devel-と-check_win_release-の違い">
+<code>check_win_devel()</code> と <code>check_win_release()</code> の違い<a class="anchor" aria-label="anchor" href="#check_win_devel-%E3%81%A8-check_win_release-%E3%81%AE%E9%81%95%E3%81%84"></a></h3>
+<table class="table"><colgroup><col width="26%"><col width="47%"><col width="26%"></colgroup><thead><tr><th>関数</th>
+<th>使用する R</th>
+<th>目的</th>
+</tr></thead><tbody><tr><td><code>check_win_devel()</code></td>
+<td>
+<strong>R-devel</strong>（次期リリースの開発版）</td>
+<td>将来の R で新たに発生する警告・非互換を<strong>先回りで検出</strong>する。CRAN が新規/更新パッケージで特に重視する</td>
+</tr><tr><td><code>check_win_release()</code></td>
+<td>
+<strong>R-release</strong>（現在の安定版）</td>
+<td>一般ユーザーが実際に使う環境で問題なく動くことを確認する</td>
+</tr><tr><td>（参考）<code>check_win_oldrelease()</code>
+</td>
+<td>
+<strong>R-oldrelease</strong>（1 つ前の安定版）</td>
+<td>旧バージョンの R との後方互換を確認する（任意）</td>
+</tr></tbody></table><blockquote>
+<p>devel と release の両方がクリーンであれば、CRAN の自動チェックで R バージョン起因の指摘を受ける可能性を大きく減らせます。</p>
+</blockquote>
+<hr></div>
+</div>
 <div class="section level2">
 <h2 id="id_4-過去に対応した必須修正履歴">4. 過去に対応した必須修正（履歴）<a class="anchor" aria-label="anchor" href="#id_4-%E9%81%8E%E5%8E%BB%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%9F%E5%BF%85%E9%A0%88%E4%BF%AE%E6%AD%A3%E5%B1%A5%E6%AD%B4"></a></h2>
 <div class="section level3">
@@ -152,7 +190,7 @@
 <h3 id="id_53-提出の方法">5.3 提出の方法<a class="anchor" aria-label="anchor" href="#id_53-%E6%8F%90%E5%87%BA%E3%81%AE%E6%96%B9%E6%B3%95"></a></h3>
 <p>いずれか一方で提出します。</p>
 <p><strong>方法 A: R から提出（推奨）</strong></p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">submit_cran</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>実行すると tarball がビルドされ、CRAN の提出フォームへ送信されます。 <code>cran-comments.md</code> の内容が自動的にコメント欄へ添付されます。</p>
 <p><strong>方法 B: Web フォームから提出</strong></p>

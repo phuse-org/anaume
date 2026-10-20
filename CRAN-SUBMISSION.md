@@ -24,6 +24,8 @@ NOTE は「2. 既知の環境依存 NOTE」を参照）
 
 `devtools::check_win_devel()` を実行し、結果メールを確認した
 
+`devtools::check_win_release()` を実行し、結果メールを確認した
+
 （推奨）R-hub など複数プラットフォームでチェックした
 
 `cran-comments.md` を用意した（提出時に CRAN へ伝えるコメント）
@@ -49,32 +51,68 @@ NOTE は「2. 既知の環境依存 NOTE」を参照）
 
 ------------------------------------------------------------------------
 
-## 3. ローカルでの `R CMD check --as-cran` 手順（Windows）
+## 3. ローカルでの `R CMD check --as-cran`
 
-この環境では Rtools が R 4.4.0 と非互換のため `devtools::check()` は
-ビルド段階で失敗することがあります。その場合は `R CMD build` /
-`R CMD check` を直接呼び出します。Pandoc は RStudio
-同梱のものを利用します。
-
-``` powershell
-# Pandoc (RStudio 同梱) を環境変数に設定
-$pandocDir = "C:\Program Files\RStudio\resources\app\bin\quarto\bin\tools"
-$env:RSTUDIO_PANDOC = $pandocDir
-$env:PATH = $pandocDir + ";" + $env:PATH
-
-# tarball をビルド（vignette 込み、PDF マニュアルは省略）
-& "C:\Program Files\R\R-4.4.0\bin\R.exe" CMD build . --no-manual
-
-# as-cran チェック
-& "C:\Program Files\R\R-4.4.0\bin\R.exe" CMD check anaume_0.1.0.tar.gz --as-cran --no-manual
-```
-
-Pandoc / Rtools / qpdf が揃った環境であれば、通常どおり以下でも可:
+開発ツール（Rtools / Pandoc /
+qpdf）が正しく揃った環境であれば、以下だけで チェックできます。
 
 ``` r
 
 devtools::check(args = "--as-cran")
 ```
+
+### 補足: 環境が未整備の場合の回避策
+
+> ここで述べる Rtools 非互換や Pandoc 未検出は **特定の開発 PC
+> の環境問題** であり、パッケージ自体の問題ではありません。本来は Rtools
+> / Pandoc を 正しく導入すれば上記 1
+> 行で済みます。環境を整備できない場合の一時的な
+> 回避策として以下を記録します。
+
+Rtools がインストール済み R のバージョンと非互換だと `devtools::check()`
+は ビルド段階で失敗することがあります。その場合は `R CMD build` /
+`R CMD check` を直接呼び出し、Pandoc は別途導入済みのもの（例: RStudio
+同梱）を環境変数で 指定します。
+
+``` powershell
+# Pandoc のパスを環境変数に設定（導入済みの場所に合わせる）
+$pandocDir = "<pandoc.exe のあるディレクトリ>"
+$env:RSTUDIO_PANDOC = $pandocDir
+$env:PATH = $pandocDir + ";" + $env:PATH
+
+# tarball をビルド（vignette 込み、PDF マニュアルは省略）
+R CMD build . --no-manual
+
+# as-cran チェック
+R CMD check anaume_0.1.0.tar.gz --as-cran --no-manual
+```
+
+------------------------------------------------------------------------
+
+## 3-2. win-builder でのチェック（CRAN と同等の Windows 環境）
+
+ローカル環境に依存せず、CRAN が実際に使う Windows
+環境でチェックできます。 tarball
+がサーバーへアップロードされ、**結果はメンテナのメール宛に届きます**
+（通常 15〜30 分、混雑時は数時間）。CRAN は提出時に devel・release
+の両方で チェックするため、**両方を実行しておく**ことを推奨します。
+
+``` r
+
+devtools::check_win_devel()     # 開発版 R (R-devel)
+devtools::check_win_release()   # 安定版 R (R-release)
+```
+
+### `check_win_devel()` と `check_win_release()` の違い
+
+| 関数 | 使用する R | 目的 |
+|----|----|----|
+| `check_win_devel()` | **R-devel**（次期リリースの開発版） | 将来の R で新たに発生する警告・非互換を**先回りで検出**する。CRAN が新規/更新パッケージで特に重視する |
+| `check_win_release()` | **R-release**（現在の安定版） | 一般ユーザーが実際に使う環境で問題なく動くことを確認する |
+| （参考）`check_win_oldrelease()` | **R-oldrelease**（1 つ前の安定版） | 旧バージョンの R との後方互換を確認する（任意） |
+
+> devel と release の両方がクリーンであれば、CRAN の自動チェックで R
+> バージョン起因の指摘を受ける可能性を大きく減らせます。
 
 ------------------------------------------------------------------------
 
