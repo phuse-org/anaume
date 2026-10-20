@@ -130,7 +130,55 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="id_5-参考リンク">5. 参考リンク<a class="anchor" aria-label="anchor" href="#id_5-%E5%8F%82%E8%80%83%E3%83%AA%E3%83%B3%E3%82%AF"></a></h2>
+<h2 id="id_5-cran-への提出手順">5. CRAN への提出手順<a class="anchor" aria-label="anchor" href="#id_5-cran-%E3%81%B8%E3%81%AE%E6%8F%90%E5%87%BA%E6%89%8B%E9%A0%86"></a></h2>
+<div class="section level3">
+<h3 id="id_51-提出の前提条件提出ボタンを押す前に">5.1 提出の前提条件（提出ボタンを押す前に）<a class="anchor" aria-label="anchor" href="#id_51-%E6%8F%90%E5%87%BA%E3%81%AE%E5%89%8D%E6%8F%90%E6%9D%A1%E4%BB%B6%E6%8F%90%E5%87%BA%E3%83%9C%E3%82%BF%E3%83%B3%E3%82%92%E6%8A%BC%E3%81%99%E5%89%8D%E3%81%AB"></a></h3>
+<ul><li>「1. 提出前チェックリスト」がすべて完了している</li>
+<li>
+<code>cran-comments.md</code> が最新の <code>R CMD check</code> / win-builder 結果と一致している</li>
+<li>
+<strong>メンテナ (<code>cre</code>) のメールアドレスで確認メールを受け取れる</strong>こと （<code>shunsuke.goto@novartis.com</code>。企業メールの場合、CRAN からの外部メールが スパム/隔離されないか事前に確認する）</li>
+</ul></div>
+<div class="section level3">
+<h3 id="id_52-共著者の同意cran-ポリシー">5.2 共著者の同意（CRAN ポリシー）<a class="anchor" aria-label="anchor" href="#id_52-%E5%85%B1%E8%91%97%E8%80%85%E3%81%AE%E5%90%8C%E6%84%8Fcran-%E3%83%9D%E3%83%AA%E3%82%B7%E3%83%BC"></a></h3>
+<p><code>DESCRIPTION</code> の <code>aut</code>（著者）全員が提出に同意している必要があります。 本パッケージは以下の 5 名が関与しています。提出前に全員の合意を得てください。</p>
+<ul><li>Shunsuke Goto（cre, aut）</li>
+<li>Tomoyuki Namai（aut）</li>
+<li>Hiro Kosako（aut）</li>
+<li>Yuichi Nakajima（aut）</li>
+<li>Hiroki Yamanobe（aut）</li>
+</ul></div>
+<div class="section level3">
+<h3 id="id_53-提出の方法">5.3 提出の方法<a class="anchor" aria-label="anchor" href="#id_53-%E6%8F%90%E5%87%BA%E3%81%AE%E6%96%B9%E6%B3%95"></a></h3>
+<p>いずれか一方で提出します。</p>
+<p><strong>方法 A: R から提出（推奨）</strong></p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">submit_cran</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>実行すると tarball がビルドされ、CRAN の提出フォームへ送信されます。 <code>cran-comments.md</code> の内容が自動的にコメント欄へ添付されます。</p>
+<p><strong>方法 B: Web フォームから提出</strong></p>
+<ol style="list-style-type: decimal"><li>tarball を作成する（「3. ローカルでの手順」参照）</li>
+<li>
+<a href="https://cran.r-project.org/submit.html" class="external-link uri">https://cran.r-project.org/submit.html</a> を開く</li>
+<li>パッケージ名・バージョン・メンテナ情報・tarball をアップロード</li>
+<li>
+<code>cran-comments.md</code> の内容をコメント欄に貼り付ける</li>
+</ol></div>
+<div class="section level3">
+<h3 id="id_54-提出後の対応">5.4 提出後の対応<a class="anchor" aria-label="anchor" href="#id_54-%E6%8F%90%E5%87%BA%E5%BE%8C%E3%81%AE%E5%AF%BE%E5%BF%9C"></a></h3>
+<ol style="list-style-type: decimal"><li><p><strong>確認メールのクリック</strong> 提出直後、メンテナ宛に確認メール（subject に <code>CRAN submission</code> 等）が届く。 本文のリンクをクリックして提出を確定する。<strong>これを行わないと受理されない。</strong></p></li>
+<li><p><strong>自動チェックの結果を待つ</strong> CRAN の incoming でマルチプラットフォームの自動チェックが走る。 問題があればメールで通知される。</p></li>
+<li><p><strong>人手レビュー</strong> 新規パッケージ（New submission）は CRAN チームによる手動レビューが入る。 数日〜1 週間程度かかり、軽微な指摘で 1〜2 往復することが多い。</p></li>
+<li><p><strong>指摘への対応</strong> 指摘が来たら、該当箇所を修正し、<code>DESCRIPTION</code> の <code>Version</code> を上げ、 <code>cran-comments.md</code> に対応内容（Resubmission）を追記して再提出する。</p></li>
+</ol></div>
+<div class="section level3">
+<h3 id="id_55-受理後の対応">5.5 受理後の対応<a class="anchor" aria-label="anchor" href="#id_55-%E5%8F%97%E7%90%86%E5%BE%8C%E3%81%AE%E5%AF%BE%E5%BF%9C"></a></h3>
+<ul><li>Git にリリースタグを打つ（例: <code>git tag v0.1.0 &amp;&amp; git push --tags</code>）</li>
+<li>GitHub Release を作成する（pkgdown ワークフローの <code>release</code> トリガで サイトも更新される）</li>
+<li>次の開発に向けて <code>Version</code> を開発版（例: <code>0.1.0.9000</code>）へ更新する</li>
+</ul><hr></div>
+</div>
+<div class="section level2">
+<h2 id="id_6-参考リンク">6. 参考リンク<a class="anchor" aria-label="anchor" href="#id_6-%E5%8F%82%E8%80%83%E3%83%AA%E3%83%B3%E3%82%AF"></a></h2>
 <ul><li>CRAN Repository Policy: <a href="https://cran.r-project.org/web/packages/policies.html" class="external-link uri">https://cran.r-project.org/web/packages/policies.html</a>
 </li>
 <li>Writing R Extensions: <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html" class="external-link uri">https://cran.r-project.org/doc/manuals/r-release/R-exts.html</a>
