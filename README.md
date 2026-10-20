@@ -5,6 +5,7 @@ Package for generating analysis results for PMDA Query regarding adverse event i
 ## Purpose
 
 To Create analysis results for PMDA Query regarding adverse event in oncology therapeutic area.
+
 ## Installation
 
 Install the current release from CRAN:
