@@ -39,6 +39,92 @@
 <p>このファイルは <code>.github/</code> 配下にあるため <code>.Rbuildignore</code> の <code>^\.github$</code> により CRAN ビルド (<code>R CMD build</code>) から自動的に除外されます。</p>
 </blockquote>
 <hr><div class="section level2">
+<h2 id="id_0-cran-登録に特有の要件knowledge-share">0. CRAN 登録に特有の要件（Knowledge Share）<a class="anchor" aria-label="anchor" href="#id_0-cran-%E7%99%BB%E9%8C%B2%E3%81%AB%E7%89%B9%E6%9C%89%E3%81%AE%E8%A6%81%E4%BB%B6knowledge-share"></a></h2>
+<p>GitHub で R パッケージを公開するのと異なり、CRAN への登録には <strong>CRAN 独自の ポリシーと手続き</strong>が存在します。ここでは「CRAN 特有」で、かつ見落としやすい 要件を切り口ごとに整理します。各項目の末尾に一次情報（出典）を示します。</p>
+<div class="section level3">
+<h3 id="a-メタデータ-description-の要件">(A) メタデータ (<code>DESCRIPTION</code>) の要件<a class="anchor" aria-label="anchor" href="#a-%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF-description-%E3%81%AE%E8%A6%81%E4%BB%B6"></a></h3>
+<ul><li>
+<strong><code>Title</code> は Title Case</strong>（各単語の頭を大文字）で、末尾にピリオドを付けない。</li>
+<li>
+<strong><code>Description</code> は完全な文</strong>で記述し、ソフトウェア名・API 名・略語は初出時に 展開するか単一引用符で囲む。文は大文字で始め、ピリオドで終える。</li>
+<li>
+<strong><code>Authors@R</code> で著者と役割を明示</strong>する。メンテナ (<code>cre</code>) は<strong>ちょうど 1 名</strong>で、 <strong>実在する有効なメールアドレス</strong>が必須（確認メールの受信に使われる）。</li>
+<li>
+<strong><code>License</code> は CRAN が認識する標準表記</strong>を用いる （<code>tools:::analyze_license()</code> で <code>is_standardizable = TRUE</code> になること）。</li>
+<li>
+<strong><code>Version</code></strong> は数値をドットで区切った形式（例 <code>0.1.0</code>）。</li>
+<li>出典: [Writing R Extensions §1.1 “The DESCRIPTION file”] (<a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#The-DESCRIPTION-file" class="external-link uri">https://cran.r-project.org/doc/manuals/r-release/R-exts.html#The-DESCRIPTION-file</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="b-チェック結果の要件">(B) チェック結果の要件<a class="anchor" aria-label="anchor" href="#b-%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E7%B5%90%E6%9E%9C%E3%81%AE%E8%A6%81%E4%BB%B6"></a></h3>
+<ul><li>
+<strong><code>R CMD check --as-cran</code> が ERROR / WARNING ゼロ</strong>であること（必須）。</li>
+<li>
+<strong>NOTE は可能な限りゼロ</strong>にする。残す場合は <code>cran-comments.md</code> で理由を説明。</li>
+<li>新規提出では <strong><code>New submission</code> NOTE は不可避</strong>（説明すれば問題ない）。</li>
+<li>出典: [CRAN Repository Policy] (<a href="https://cran.r-project.org/web/packages/policies.html" class="external-link uri">https://cran.r-project.org/web/packages/policies.html</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="c-動作環境の要件">(C) 動作・環境の要件<a class="anchor" aria-label="anchor" href="#c-%E5%8B%95%E4%BD%9C%E7%92%B0%E5%A2%83%E3%81%AE%E8%A6%81%E4%BB%B6"></a></h3>
+<ul><li>
+<strong>複数プラットフォームで動作</strong>する必要がある（CRAN は Windows / macOS / Linux、かつ R-devel / R-release で自動チェックする）。 → 提出前に <strong>win-builder (devel + release)</strong> でのチェックを推奨（本書 §3-2）。</li>
+<li>
+<strong>examples / tests / vignettes は妥当な時間内に完了</strong>すること。重い処理は <code>\donttest{}</code> 等で調整する。</li>
+<li>
+<strong>外部リソース（URL・ファイル・ネットワーク）への依存は最小限</strong>にし、 <code>DESCRIPTION</code> の <code>URL</code> は実在して応答するものだけを記載する。</li>
+<li>出典: [CRAN Repository Policy] (<a href="https://cran.r-project.org/web/packages/policies.html" class="external-link uri">https://cran.r-project.org/web/packages/policies.html</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="d-ファイル構成サイズの要件">(D) ファイル構成・サイズの要件<a class="anchor" aria-label="anchor" href="#d-%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E6%A7%8B%E6%88%90%E3%82%B5%E3%82%A4%E3%82%BA%E3%81%AE%E8%A6%81%E4%BB%B6"></a></h3>
+<ul><li>
+<strong>パッケージに含めてよいのは標準的なファイルのみ</strong>。開発用スクリプトや 生成物は <code>.Rbuildignore</code> で除外する（本リポジトリでは <code>inst/dev/</code> 等）。</li>
+<li>
+<strong>tarball はできるだけ小さく</strong>（目安 5 MB 未満）。大きなデータは別パッケージ化 や圧縮を検討する。</li>
+<li>
+<strong><code>LICENSE</code> 全文の同梱ルール</strong>に従う（標準ライセンスは全文を同梱せず、 <code>DESCRIPTION</code> の <code>License</code> 指定のみ。本書では <code>.Rbuildignore</code> で除外済み）。</li>
+<li>出典: [Writing R Extensions §1 “Creating R packages”] (<a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Creating-R-packages" class="external-link uri">https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Creating-R-packages</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="e-人的手続き上の要件cran-固有">(E) 人的・手続き上の要件（CRAN 固有）<a class="anchor" aria-label="anchor" href="#e-%E4%BA%BA%E7%9A%84%E6%89%8B%E7%B6%9A%E3%81%8D%E4%B8%8A%E3%81%AE%E8%A6%81%E4%BB%B6cran-%E5%9B%BA%E6%9C%89"></a></h3>
+<ul><li>
+<strong>全著者 (<code>aut</code>) の提出同意</strong>が必要（GitHub 公開にはない要件）。</li>
+<li>
+<strong>提出後の確認メールのクリック</strong>で提出が確定する（本書 §5.4）。</li>
+<li>
+<strong>新規パッケージは人手レビュー</strong>があり、軽微な指摘で再提出を求められることが 多い。指摘対応時は <code>Version</code> を上げて再提出する。</li>
+<li>
+<strong>メンテナは継続的なメンテナンス責任</strong>を負う（R の更新で生じる不具合への対応、 逆依存パッケージへの配慮など）。</li>
+<li>出典: [CRAN Repository Policy] (<a href="https://cran.r-project.org/web/packages/policies.html" class="external-link uri">https://cran.r-project.org/web/packages/policies.html</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="まとめ-github-公開との主な違い">まとめ: GitHub 公開との主な違い<a class="anchor" aria-label="anchor" href="#%E3%81%BE%E3%81%A8%E3%82%81-github-%E5%85%AC%E9%96%8B%E3%81%A8%E3%81%AE%E4%B8%BB%E3%81%AA%E9%81%95%E3%81%84"></a></h3>
+<table class="table"><thead><tr><th>観点</th>
+<th>GitHub 公開</th>
+<th>CRAN 登録</th>
+</tr></thead><tbody><tr><td>メタデータ</td>
+<td>任意</td>
+<td>
+<code>DESCRIPTION</code> の厳密な形式が必須</td>
+</tr><tr><td>チェック</td>
+<td>任意</td>
+<td>
+<code>--as-cran</code> で ERROR/WARNING ゼロ必須</td>
+</tr><tr><td>動作環境</td>
+<td>作者の環境で可</td>
+<td>複数 OS × 複数 R で動作必須</td>
+</tr><tr><td>著者の同意</td>
+<td>不要</td>
+<td><strong>全著者の同意が必要</strong></td>
+</tr><tr><td>公開手続き</td>
+<td>push のみ</td>
+<td>提出フォーム + 確認メール + 人手レビュー</td>
+</tr><tr><td>公開後</td>
+<td>任意</td>
+<td>
+<strong>継続メンテナンス責任</strong>を負う</td>
+</tr></tbody></table><hr></div>
+</div>
+<div class="section level2">
 <h2 id="id_1-提出前チェックリスト">1. 提出前チェックリスト<a class="anchor" aria-label="anchor" href="#id_1-%E6%8F%90%E5%87%BA%E5%89%8D%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%88"></a></h2>
 <ul class="task-list"><li><label><input type="checkbox"><code>DESCRIPTION</code> の <code>Version</code> を更新した</label></li>
 <li><label><input type="checkbox"><code>NEWS.md</code> に今回のリリース内容を追記した</label></li>
