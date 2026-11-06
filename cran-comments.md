@@ -21,3 +21,5 @@ event queries.
 ## Notes
 
 * This is a new submission, so the "New submission" NOTE is expected.
+* The "Possibly misspelled words" in DESCRIPTION (ARD, PMDA) are valid
+  domain-specific acronyms and are expanded on first use in the Description.
