@@ -244,6 +244,17 @@
 <p><strong>提出方法の選び方</strong>: ビルド環境（Rtools / Pandoc）が正しく整っていれば <strong>方法 A</strong> が簡潔で確実。一方、Rtools が R のバージョンと非互換などで <code>devtools</code> 経由のビルドが失敗する環境では、<strong>方法 B</strong> を推奨する。 <code>R CMD build</code>（必要に応じて Pandoc を環境変数で指定）で tarball を作成し、 win-builder 等で検証済みの同じ tarball を Web フォームから提出するのが 最も確実。ビルド環境を整備できれば方法 A に移行してよい。</p>
 </blockquote>
 </div>
+<div class="section level4">
+<h4 id="補足-提出内容は実行環境に依存するか">補足: 提出内容は実行環境に依存するか<a class="anchor" aria-label="anchor" href="#%E8%A3%9C%E8%B6%B3-%E6%8F%90%E5%87%BA%E5%86%85%E5%AE%B9%E3%81%AF%E5%AE%9F%E8%A1%8C%E7%92%B0%E5%A2%83%E3%81%AB%E4%BE%9D%E5%AD%98%E3%81%99%E3%82%8B%E3%81%8B"></a></h4>
+<ul><li>
+<strong>そもそも tarball とは</strong>。<code>R CMD build</code> が生成する <code>anaume_0.1.0.tar.gz</code> のこと。パッケージのソース一式（<code>R/</code>・<code>DESCRIPTION</code>・<code>man/</code>・ビルド済み vignette など）を 1 ファイルにまとめて圧縮したアーカイブで、CRAN へ提出 するのはこのファイル。名称は UNIX の書庫作成コマンド <code>tar</code> ＋ gzip 圧縮 （<code>.tar.gz</code>）に由来する。</li>
+<li>
+<strong>tarball の中身は環境非依存</strong>。<code>R CMD build</code> は同じソースから標準化された tarball を生成するため、どの PC（あるいは CRAN サーバー）でビルドしても 内容は同一。実行環境の設定が成果物に混入することはない。</li>
+<li>
+<strong>環境が左右するのは「ビルドの成否」だけ</strong>。Pandoc / Rtools / pdflatex は あくまで生成に使う「道具」であり、揃わなければビルドが止まるだけで、 出力の中身を変えるものではない。</li>
+<li>
+<strong>唯一の例外</strong>は、vignette 内でコードを実行して結果を埋め込む場合 （乱数・時刻・依存パッケージのバージョンに依存する出力など）。 <code>anaume.Rmd</code> はこうした非決定的な出力を含まないため、方法 A・B の いずれで提出しても内容は同一になる。</li>
+</ul></div>
 </div>
 <div class="section level3">
 <h3 id="id_54-提出後の対応">5.4 提出後の対応<a class="anchor" aria-label="anchor" href="#id_54-%E6%8F%90%E5%87%BA%E5%BE%8C%E3%81%AE%E5%AF%BE%E5%BF%9C"></a></h3>
