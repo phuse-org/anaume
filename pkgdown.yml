@@ -3,7 +3,7 @@ pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   anaume: anaume.html
-last_built: 2026-11-09T23:58Z
+last_built: 2026-11-10T00:06Z
 urls:
   reference: https://phuse-org.github.io/anaume/reference
   article: https://phuse-org.github.io/anaume/articles

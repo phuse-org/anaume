@@ -191,19 +191,60 @@
 </ul></div>
 <div class="section level3">
 <h3 id="id_53-提出の方法">5.3 提出の方法<a class="anchor" aria-label="anchor" href="#id_53-%E6%8F%90%E5%87%BA%E3%81%AE%E6%96%B9%E6%B3%95"></a></h3>
-<p>いずれか一方で提出します。</p>
-<p><strong>方法 A: R から提出（推奨）</strong></p>
+<p>いずれか一方で提出します。どちらを選んでも <strong>提出先（CRAN incoming）と その後の処理（確認メール → 自動チェック → 人手レビュー）は同一</strong> です。 違いは「tarball のビルドとアップロードを誰が行うか」だけです。</p>
+<div class="section level4">
+<h4 id="方法の比較">方法の比較<a class="anchor" aria-label="anchor" href="#%E6%96%B9%E6%B3%95%E3%81%AE%E6%AF%94%E8%BC%83"></a></h4>
+<table class="table"><colgroup><col width="9%"><col width="55%"><col width="34%"></colgroup><thead><tr><th>観点</th>
+<th>方法 A: <code>devtools::submit_cran()</code>
+</th>
+<th>方法 B: Web フォーム</th>
+</tr></thead><tbody><tr><td>操作</td>
+<td>R コンソールで 1 コマンド</td>
+<td>ブラウザで手動入力・アップロード</td>
+</tr><tr><td>tarball ビルド</td>
+<td>自動（内部で <code><a href="https://pkgbuild.r-lib.org/reference/build.html" class="external-link">pkgbuild::build()</a></code>）</td>
+<td>自分で <code>R CMD build</code> 実行</td>
+</tr><tr><td><code>cran-comments.md</code></td>
+<td>自動で添付される</td>
+<td>内容を手動でコピペ</td>
+</tr><tr><td>メンテナ情報</td>
+<td>
+<code>DESCRIPTION</code> から自動入力</td>
+<td>フォームに手入力</td>
+</tr><tr><td>必要な環境</td>
+<td>Rtools / Pandoc など<strong>ビルド環境が整っていること</strong>
+</td>
+<td>tarball さえ作れれば OK</td>
+</tr><tr><td>ヒューマンエラー</td>
+<td>少ない（自動化）</td>
+<td>入力ミス・ファイル取り違えの余地</td>
+</tr><tr><td>向いているケース</td>
+<td>通常のリリース、CI 的に回したい場合</td>
+<td>ビルド環境に難がある／手元の tarball を確実に送りたい場合</td>
+</tr></tbody></table><p><strong>方法 A: R から提出（推奨）</strong></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">submit_cran</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>実行すると tarball がビルドされ、CRAN の提出フォームへ送信されます。 <code>cran-comments.md</code> の内容が自動的にコメント欄へ添付されます。</p>
-<p><strong>方法 B: Web フォームから提出</strong></p>
+<ul><li>
+<strong>長所</strong>: 1 コマンドで完結し、メンテナ情報・コメントの転記ミスが起きない。 リリース手順を定型化・再現しやすい。</li>
+<li>
+<strong>短所</strong>: 実行環境に正しいビルドツール（Rtools / Pandoc）が必要。 Rtools がインストール済み R のバージョンと非互換な環境では、ビルド段階で 失敗することがある。</li>
+</ul><p><strong>方法 B: Web フォームから提出</strong></p>
 <ol style="list-style-type: decimal"><li>tarball を作成する（「3. ローカルでの手順」参照）</li>
 <li>
 <a href="https://cran.r-project.org/submit.html" class="external-link uri">https://cran.r-project.org/submit.html</a> を開く</li>
 <li>パッケージ名・バージョン・メンテナ情報・tarball をアップロード</li>
 <li>
 <code>cran-comments.md</code> の内容をコメント欄に貼り付ける</li>
-</ol></div>
+</ol><ul><li>
+<strong>長所</strong>: <code>R CMD build</code> で tarball さえ用意できれば提出でき、<code>devtools</code> の ビルド経路に依存しない。win-builder 等で検証済みの tarball をそのまま 送れるため確実性が高い。</li>
+<li>
+<strong>短所</strong>: メンテナ情報・コメントを手入力するため転記ミスの余地があり、 手順がやや煩雑。</li>
+</ul><blockquote>
+<p><strong>提出方法の選び方</strong>: ビルド環境（Rtools / Pandoc）が正しく整っていれば <strong>方法 A</strong> が簡潔で確実。一方、Rtools が R のバージョンと非互換などで <code>devtools</code> 経由のビルドが失敗する環境では、<strong>方法 B</strong> を推奨する。 <code>R CMD build</code>（必要に応じて Pandoc を環境変数で指定）で tarball を作成し、 win-builder 等で検証済みの同じ tarball を Web フォームから提出するのが 最も確実。ビルド環境を整備できれば方法 A に移行してよい。</p>
+</blockquote>
+</div>
+</div>
 <div class="section level3">
 <h3 id="id_54-提出後の対応">5.4 提出後の対応<a class="anchor" aria-label="anchor" href="#id_54-%E6%8F%90%E5%87%BA%E5%BE%8C%E3%81%AE%E5%AF%BE%E5%BF%9C"></a></h3>
 <ol style="list-style-type: decimal"><li><p><strong>確認メールのクリック</strong> 提出直後、メンテナ宛に確認メール（subject に <code>CRAN submission</code> 等）が届く。 本文のリンクをクリックして提出を確定する。<strong>これを行わないと受理されない。</strong></p></li>
